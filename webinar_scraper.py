@@ -1,0 +1,116 @@
+import requests
+from html.parser import HTMLParser
+import pandas as pd
+import os
+
+class WebinarParser(HTMLParser):
+    """An HTMLParser class used to scrape Webinar data."""
+
+    def __init__(self):
+        super().__init__()
+        self.webinars = []
+        self.title_flag = False
+        self.current_url = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "a":
+            for attr in attrs:
+                if attr[0] == "href":
+                    self.current_url = attr[1]
+
+        if tag == "h3":
+            for attr in attrs:
+                if attr == ('class', 'h3 book-card__title'):
+                    self.title_flag = True
+
+    def handle_data(self, data):
+        if self.title_flag and self.current_url:
+            self.webinars.append({"Title": data.strip(), "URL": self.current_url})
+            self.title_flag = False
+            self.current_url = None
+
+    def handle_endtag(self, tag):
+        if tag == "h3" and self.title_flag:
+            self.title_flag = False
+
+    def get_webinars(self):
+        return self.webinars
+
+def fetch_webinar_page(page_number):
+    url = "https://ctrinstitute.com/wp-admin/admin-ajax.php?action=product_archive_filter"
+    params = {
+        'paged': page_number,
+        'filter_term': 33
+    }
+    headers = {
+        'User-Agent': 'Mozilla/5.0'
+    }
+    response = requests.get(url, params=params, headers=headers)
+
+    if response.status_code != 200:
+        return None
+
+    # Check if the response content type is JSON or not
+    if 'application/json' in response.headers.get('Content-Type', ''):
+        json_response = response.json()
+        return json_response.get('data', {}).get('posts', '') 
+    else:
+        return response.text
+
+def fetch_all_webinars():
+    page_number = 1
+    all_webinars = []
+    while True:
+        print(f"Fetching page {page_number}...")
+        posts_html = fetch_webinar_page(page_number)
+
+        if not posts_html:
+            break
+
+        parser = WebinarParser()
+        parser.feed(posts_html)
+        webinars = parser.get_webinars()
+
+        if not webinars:
+            break
+        all_webinars.extend(webinars)
+        page_number += 1
+    return all_webinars
+
+###########################
+
+def get_desktop_path():
+    """Get the path to the user's desktop directory."""
+    return os.path.join(os.path.join(os.path.expanduser('~')), 'Documents')
+
+all_webinars = fetch_all_webinars()
+print("**********************************")
+print(f"*** Found {len(all_webinars)} webinars!")
+print("**********************************")
+for webinar in all_webinars:
+    print(f"{webinar['Title']} - {webinar['URL']}")
+
+print("*********************************")
+print("*** Exporting to excel file.")
+print("*********************************")
+
+# Get the path to user's desktop.
+desktop_path = get_desktop_path()
+output_file = os.path.join(desktop_path, 'webinar_titles_and_links.xlsx')
+
+# Export workshop data to excel file.
+df = pd.DataFrame(all_webinars)
+with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+    df.to_excel(writer, sheet_name='Webinars', index=False)
+    workbook = writer.book
+    worksheet = writer.sheets['Webinars']
+
+    for idx, url in enumerate(df['URL'], start=2):
+        worksheet.write_url(f'B{idx}', url)
+
+print("Webinar titles and links have been exported to workshop_titles_and_links.xlsx in your documents folder.")
+
+# Open the created Excel file.
+if os.name == 'nt':  # Windows
+    os.startfile(output_file)
+    os.startfile(output_file)
