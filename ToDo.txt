@@ -7,8 +7,3 @@
 * OD Workshops - Subtitle, Price, CEC hours, Description, Trainer
 * OD Webinars - Subtilte, Price, CEC hours, Description Trainer
 * Podcasts - Description
-
-
-
-- Create GPT that remembers all data from each category.
-- Query it to ask for suitable recommendations.
