@@ -6,4 +6,6 @@
 * Blogs - Category, Author
 * OD Workshops - Subtitle, Price, CEC hours, Description, Trainer
 * OD Webinars - Subtilte, Price, CEC hours, Description Trainer
-* Podcasts - Description
+
+
+*** Podcast - Add audio path to podcast scraper.

@@ -2,6 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
+from podcast_page_scraper import PodcastPageScraper, fetch_podcast_description_page
 
 class PodcastParser(HTMLParser):
     """An HTMLParser class used to scrape Podcast data."""
@@ -25,7 +26,7 @@ class PodcastParser(HTMLParser):
 
     def handle_data(self, data):
         if self.title_flag and self.current_url:
-            self.podcasts.append({"Title": data.strip(), "URL": self.current_url})
+            self.podcasts.append({"Title": data.strip(), "URL": self.current_url, "Description": ""})
             self.title_flag = False
             self.current_url = None
 
@@ -72,11 +73,16 @@ def fetch_all_podcasts():
 
         if not podcasts:
             break
+        for podcast in podcasts:
+            description_html = fetch_podcast_description_page(podcast['URL'])
+            if description_html:
+                page_parser = PodcastPageScraper()
+                page_parser.feed(description_html)
+                podcast['Description'] = page_parser.get_podcast_description()
+        
         all_podcasts.extend(podcasts)
         page_number += 1
     return all_podcasts
-
-###########################
 
 def get_desktop_path():
     """Get the path to the user's desktop directory."""
@@ -95,7 +101,7 @@ print("*********************************")
 
 # Get the path to user's desktop.
 desktop_path = get_desktop_path()
-output_file = os.path.join(desktop_path, 'podcast_titles_and_links.xlsx')
+output_file = os.path.join(desktop_path, 'podcast_web_data.xlsx')
 
 # Export workshop data to excel file.
 df = pd.DataFrame(all_podcasts)
@@ -107,9 +113,9 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for idx, url in enumerate(df['URL'], start=2):
         worksheet.write_url(f'B{idx}', url)
 
-print("Podcast titles and links have been exported to podcast_titles_and_links.xlsx in your documents folder.")
+print("Podcast titles and links have been exported to podcast_web_data.xlsx in your documents folder.")
 
 # Open the created Excel file.
 if os.name == 'nt':  # Windows
     os.startfile(output_file)
-    os.startfile(output_file)
+

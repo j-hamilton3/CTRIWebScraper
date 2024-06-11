@@ -42,12 +42,3 @@ def fetch_podcast_description_page(url):
         return json_response.get('data', {}).get('posts', '') 
     else:
         return response.text
-    
-
-html = fetch_podcast_description_page("https://ctrinstitute.com/podcast/episode-23-becoming-a-trauma-informed-leader/")
-
-parser = PodcastPageScraper()
-
-parser.feed(html)
-description = parser.get_podcast_description()
-print(description)
