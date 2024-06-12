@@ -26,7 +26,7 @@ class PodcastParser(HTMLParser):
 
     def handle_data(self, data):
         if self.title_flag and self.current_url:
-            self.podcasts.append({"Title": data.strip(), "URL": self.current_url, "Description": ""})
+            self.podcasts.append({"Title": data.strip(), "URL": self.current_url, "Description": "", "Audio Path": ""})
             self.title_flag = False
             self.current_url = None
 
@@ -78,7 +78,9 @@ def fetch_all_podcasts():
             if description_html:
                 page_parser = PodcastPageScraper()
                 page_parser.feed(description_html)
-                podcast['Description'] = page_parser.get_podcast_description()
+                podcast_data = page_parser.get_podcast_description_and_audio()
+                podcast['Description'] = podcast_data['podcast_description']
+                podcast['Audio Path'] = podcast_data['podcast_audio_path']
         
         all_podcasts.extend(podcasts)
         page_number += 1
@@ -103,7 +105,7 @@ print("*********************************")
 desktop_path = get_desktop_path()
 output_file = os.path.join(desktop_path, 'podcast_web_data.xlsx')
 
-# Export workshop data to excel file.
+# Export podcast data to excel file.
 df = pd.DataFrame(all_podcasts)
 with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     df.to_excel(writer, sheet_name='Podcasts', index=False)
@@ -113,7 +115,7 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for idx, url in enumerate(df['URL'], start=2):
         worksheet.write_url(f'B{idx}', url)
 
-print("Podcast titles and links have been exported to podcast_web_data.xlsx in your documents folder.")
+print("Podcast titles, links, descriptions, and audio paths have been exported to podcast_web_data.xlsx in your documents folder.")
 
 # Open the created Excel file.
 if os.name == 'nt':  # Windows
