@@ -116,3 +116,4 @@ print("Topic titles and links have been exported to topic_titles_and_links.xlsx 
 if os.name == 'nt':  # Windows
     os.startfile(output_file)
     os.startfile(output_file)
+
