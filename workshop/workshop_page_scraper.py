@@ -1,6 +1,7 @@
 import requests
 from html.parser import HTMLParser
 import pandas as pd
+import cloudscraper
 
 class WorkshopPageScraper(HTMLParser):
     """An HTMLParser class used to scrape Workshop page data."""
@@ -26,22 +27,18 @@ class WorkshopPageScraper(HTMLParser):
         
 
     def handle_starttag(self, tag, attrs):
-        if tag == "p":
+        if tag == "h3":
             for attr in attrs:
-                if attr[1] == "podcast__text__content":
-                    self.description_flag = True
-        
-        if tag == "source" and not self.audio_path:
-            for attr in attrs:
-                self.audio_path.append(attr[1])
-
-    def handle_data(self, data):
-        if self.price_flag:
-            self.price.append(data)
+                if attr[1] == "top-title__subtitle":
+                    self.subtitle_flag = True
     
+    def handle_data(self, data):
+        if self.subtitle_flag:
+            self.subtitle.append(data)
+
     def handle_endtag(self, tag):
-        if tag == "p":
-            self.description_flag = False
+        if tag == "h3":
+            self.subtitle_flag = False
 
     def get_workshop_information(self):
         return {
@@ -55,21 +52,16 @@ class WorkshopPageScraper(HTMLParser):
         }
 
 def fetch_workshop_description_page(url):
-    headers = {
-        'User-Agent': 'Mozilla/5.0'
-    }
-    response = requests.get(url, headers=headers)
+    cloud_scraper = cloudscraper.create_scraper()
+    response = cloud_scraper.get(url)
 
-    # Check if the response content type is JSON or not
-    if 'application/json' in response.headers.get('Content-Type', ''):
-        json_response = response.json()
-        return json_response.get('data', {}).get('posts', '') 
-    else:
-        return response.text
+    html_content = response.content.decode('utf-8')
+
+    return html_content
+    
     
 if __name__ == "__main__":
-    html = fetch_workshop_description_page("https://ctrinstitute.com/product/on-demand-workshop-addictions-and-mental-health/?utm_medium=cpc&utm_source=google&utm_campaign=ctri-branded")
-    
+    html = fetch_workshop_description_page("https://ctrinstitute.com/product/on-demand-workshop-addictions-and-mental-health/")
     parser = WorkshopPageScraper()
     parser.feed(html)
 
