@@ -27,18 +27,38 @@ class WorkshopPageScraper(HTMLParser):
         
 
     def handle_starttag(self, tag, attrs):
+
+        # Subtitles
         if tag == "h3":
             for attr in attrs:
                 if attr[1] == "top-title__subtitle":
                     self.subtitle_flag = True
+
+        # Price
+        if tag == "div":
+            for attr in attrs:
+                if attr[1] == " product-price":
+                    self.price_flag = True
     
     def handle_data(self, data):
+
+        # Subtitles
         if self.subtitle_flag:
             self.subtitle.append(data)
 
+        # Price
+        if self.price_flag:
+            self.price.append(data.strip())
+
     def handle_endtag(self, tag):
+
+        # Subtitles
         if tag == "h3":
             self.subtitle_flag = False
+        
+        # Price
+        if tag == "div":
+            self.price_flag = False
 
     def get_workshop_information(self):
         return {
