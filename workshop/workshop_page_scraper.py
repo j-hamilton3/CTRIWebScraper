@@ -45,6 +45,12 @@ class WorkshopPageScraper(HTMLParser):
             for attr in attrs:
                 if attr[1] == "on-demand-workshop__credit-hours--hours":
                     self.credit_hours_flag = True
+        
+        # Trainer
+        if tag == "p":
+            for attr in attrs:
+                if attr[1] == "on-demand-workshop__trainer":
+                    self.trainer_flag = True
     
     def handle_data(self, data):
 
@@ -60,6 +66,10 @@ class WorkshopPageScraper(HTMLParser):
         if self.credit_hours_flag:
             self.credit_hours.append(data)
 
+        # Trainer
+        if self.trainer_flag:
+            self.trainer.append(data.replace("\n", " ").replace("Trainer:", "").strip()) # May need to format spaces.
+
     def handle_endtag(self, tag):
 
         # Subtitles
@@ -71,6 +81,9 @@ class WorkshopPageScraper(HTMLParser):
             self.price_flag = False
             self.credit_hours_flag = False
         
+        # Trainer
+        if tag == "p":
+            self.trainer_flag = False
 
     def get_workshop_information(self):
         return {
