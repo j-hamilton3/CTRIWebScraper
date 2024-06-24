@@ -39,6 +39,12 @@ class WorkshopPageScraper(HTMLParser):
             for attr in attrs:
                 if attr[1] == " product-price":
                     self.price_flag = True
+
+        # Credit Hours
+        if tag == "div":
+            for attr in attrs:
+                if attr[1] == "on-demand-workshop__credit-hours--hours":
+                    self.credit_hours_flag = True
     
     def handle_data(self, data):
 
@@ -50,6 +56,10 @@ class WorkshopPageScraper(HTMLParser):
         if self.price_flag:
             self.price.append(data.strip())
 
+        # Credit Hours
+        if self.credit_hours_flag:
+            self.credit_hours.append(data)
+
     def handle_endtag(self, tag):
 
         # Subtitles
@@ -59,6 +69,8 @@ class WorkshopPageScraper(HTMLParser):
         # Price
         if tag == "div":
             self.price_flag = False
+            self.credit_hours_flag = False
+        
 
     def get_workshop_information(self):
         return {
