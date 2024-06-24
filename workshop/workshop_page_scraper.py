@@ -12,6 +12,7 @@ class WorkshopPageScraper(HTMLParser):
         self.price = []
         self.credit_hours = []
         self.trainer = []
+        self.description = []
         self.learning_objectives = []
         self.topics_reviewed = []
         self.target_audience = []
@@ -21,6 +22,7 @@ class WorkshopPageScraper(HTMLParser):
         self.price_flag = False
         self.credit_hours_flag = False
         self.trainer_flag = False
+        self.description_flag = False
         self.learning_objectives_flag = False
         self.topics_reviewed_flag = False
         self.target_audience_flag = False
@@ -51,6 +53,16 @@ class WorkshopPageScraper(HTMLParser):
             for attr in attrs:
                 if attr[1] == "on-demand-workshop__trainer":
                     self.trainer_flag = True
+
+        # Learning Objectives
+        if tag == "div":
+            for attr in attrs:
+                if attr[1] == "parent-topic__learning-objectives":
+                    self.learning_objectives_flag = True
+        
+        
+
+        
     
     def handle_data(self, data):
 
@@ -69,6 +81,12 @@ class WorkshopPageScraper(HTMLParser):
         # Trainer
         if self.trainer_flag:
             self.trainer.append(data.replace("\n", " ").replace("Trainer:", "").strip()) # May need to format spaces.
+        
+        # Learning Objectives
+        if self.learning_objectives_flag:
+            self.learning_objectives.append(data.strip())
+
+        
 
     def handle_endtag(self, tag):
 
@@ -80,10 +98,17 @@ class WorkshopPageScraper(HTMLParser):
         if tag == "div":
             self.price_flag = False
             self.credit_hours_flag = False
+            self.learning_objectives_flag = False
         
         # Trainer
         if tag == "p":
             self.trainer_flag = False
+            self.description_flag = False
+        
+    
+
+        
+
 
     def get_workshop_information(self):
         return {
@@ -91,6 +116,7 @@ class WorkshopPageScraper(HTMLParser):
             "workshop_price": ' '.join(self.price), 
             "workshop_credit_hours": ' '.join(self.credit_hours), 
             "workshop_trainer": ' '.join(self.trainer),
+            "workshop_description": ' '.join(self.description),
             "workshop_learning_objectives": ' '.join(self.learning_objectives),
             "workshop_topics_reviewed": ' '.join(self.topics_reviewed),
             "workshop_target_audience": ' '.join(self.target_audience),
