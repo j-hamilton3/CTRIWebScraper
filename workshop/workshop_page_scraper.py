@@ -66,8 +66,12 @@ class WorkshopPageScraper(HTMLParser):
                 if attr[1] == "parent-topic__topics-reviewed":
                     self.topics_reviewed_flag = True
 
-        # Target audience.
-        
+        # Target Audience
+        if tag == "div":
+            for attr in attrs:
+                if attr[1] == "parent-topic__target-audicence":
+                    self.target_audience_flag = True
+  
     def handle_data(self, data):
 
         # Subtitles
@@ -94,6 +98,10 @@ class WorkshopPageScraper(HTMLParser):
         if self.topics_reviewed_flag:
             self.topics_reviewed.append(data.strip())
 
+        # Target Audience
+        if self.target_audience_flag:
+            self.target_audience.append(data.strip())
+
     def handle_endtag(self, tag):
 
         # Subtitles
@@ -106,6 +114,7 @@ class WorkshopPageScraper(HTMLParser):
             self.credit_hours_flag = False
             self.learning_objectives_flag = False
             self.topics_reviewed_flag = False
+            self.target_audience_flag = False
         
         # Trainer
         if tag == "p":
