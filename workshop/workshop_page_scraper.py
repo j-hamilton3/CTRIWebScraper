@@ -146,10 +146,3 @@ def fetch_workshop_description_page(url):
     html_content = response.content.decode('utf-8')
 
     return html_content
-
-if __name__ == "__main__":
-    html = fetch_workshop_description_page("https://ctrinstitute.com/product/on-demand-workshop-addictions-and-mental-health/")
-    parser = WorkshopPageScraper()
-    parser.feed(html)
-
-    print(parser.get_workshop_information())

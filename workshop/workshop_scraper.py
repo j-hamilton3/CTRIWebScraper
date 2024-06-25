@@ -2,6 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
+from workshop_page_scraper import WorkshopPageScraper, fetch_workshop_description_page
 
 class WorkshopParser(HTMLParser):
     """An HTMLParser class used to scrape Workshop data."""
@@ -25,7 +26,16 @@ class WorkshopParser(HTMLParser):
 
     def handle_data(self, data):
         if self.title_flag and self.current_url:
-            self.workshops.append({"Title": data.strip(), "URL": self.current_url})
+            self.workshops.append({"Title": data.strip(),
+                                 "URL": self.current_url, 
+                                 "Subtitle": "",
+                                 "Price": "",
+                                 "Credit Hours": "",
+                                 "Trainer": "",
+                                 "Description": "",
+                                 "Learning Objectives": "",
+                                 "Topics Reviewed": "",
+                                 "Target Audience": ""})
             self.title_flag = False
             self.current_url = None
 
@@ -73,6 +83,22 @@ def fetch_all_workshops():
 
         if not workshops:
             break
+        ############
+        for workshop in workshops:
+            description_html = fetch_workshop_description_page(workshop['URL'])
+            if description_html:
+                page_parser = WorkshopPageScraper()
+                page_parser.feed(description_html)
+                workshop_data = page_parser.get_workshop_information()
+                workshop['Subtitle'] = workshop_data['workshop_subtitle']
+                workshop['Price'] = workshop_data['workshop_price']
+                workshop['Credit Hours'] = workshop_data['workshop_credit_hours']
+                workshop['Trainer'] = workshop_data['workshop_trainer']
+                workshop['Description'] = workshop_data['workshop_description']
+                workshop['Learning Objectives'] = workshop_data['workshop_learning_objectives']
+                workshop['Topics Reviewed'] = workshop_data['workshop_topics_reviewed']
+                workshop['Target Audience'] = workshop_data['workshop_target_audience']
+        ############
         all_workshops.extend(workshops)
         page_number += 1
     return all_workshops
@@ -96,7 +122,7 @@ print("*********************************")
 
 # Get the path to user's desktop.
 desktop_path = get_desktop_path()
-output_file = os.path.join(desktop_path, 'workshop_titles_and_links.xlsx')
+output_file = os.path.join(desktop_path, 'workshop_web_data.xlsx')
 
 # Export workshop data to excel file.
 df = pd.DataFrame(all_workshops)
@@ -108,7 +134,7 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for idx, url in enumerate(df['URL'], start=2):
         worksheet.write_url(f'B{idx}', url)
 
-print("Workshop titles and links have been exported to workshop_titles_and_links.xlsx in your documents folder.")
+print("Workshop titles and links have been exported to workshop_web_data.xlsx in your documents folder.")
 
 # Open the created Excel file.
 if os.name == 'nt':  # Windows
