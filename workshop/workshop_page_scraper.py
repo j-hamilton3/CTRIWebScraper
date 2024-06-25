@@ -17,7 +17,6 @@ class WorkshopPageScraper(HTMLParser):
         self.topics_reviewed = []
         self.target_audience = []
 
-
         self.subtitle_flag = False
         self.price_flag = False
         self.credit_hours_flag = False
@@ -26,10 +25,8 @@ class WorkshopPageScraper(HTMLParser):
         self.learning_objectives_flag = False
         self.topics_reviewed_flag = False
         self.target_audience_flag = False
-        
 
     def handle_starttag(self, tag, attrs):
-
         # Subtitles
         if tag == "h3":
             for attr in attrs:
@@ -71,9 +68,15 @@ class WorkshopPageScraper(HTMLParser):
             for attr in attrs:
                 if attr[1] == "parent-topic__target-audicence":
                     self.target_audience_flag = True
-  
-    def handle_data(self, data):
 
+        # Description
+        if tag == "div":
+            for attr in attrs:
+                if attr[1] == "spu-placeholder":
+                    self.description_flag = True
+        
+
+    def handle_data(self, data):
         # Subtitles
         if self.subtitle_flag:
             self.subtitle.append(data)
@@ -88,8 +91,8 @@ class WorkshopPageScraper(HTMLParser):
 
         # Trainer
         if self.trainer_flag:
-            self.trainer.append(data.replace("\n", " ").replace("Trainer:", "").strip()) # May need to format spaces.
-        
+            self.trainer.append(data.replace("\n", " ").replace("Trainer:", "").strip())
+
         # Learning Objectives
         if self.learning_objectives_flag:
             self.learning_objectives.append(data.strip())
@@ -102,12 +105,15 @@ class WorkshopPageScraper(HTMLParser):
         if self.target_audience_flag:
             self.target_audience.append(data.strip())
 
-    def handle_endtag(self, tag):
+        # Description
+        if self.description_flag:
+            self.description.append(data.strip())
 
+    def handle_endtag(self, tag):
         # Subtitles
         if tag == "h3":
             self.subtitle_flag = False
-        
+
         # Price
         if tag == "div":
             self.price_flag = False
@@ -115,7 +121,7 @@ class WorkshopPageScraper(HTMLParser):
             self.learning_objectives_flag = False
             self.topics_reviewed_flag = False
             self.target_audience_flag = False
-        
+
         # Trainer
         if tag == "p":
             self.trainer_flag = False
@@ -123,9 +129,9 @@ class WorkshopPageScraper(HTMLParser):
 
     def get_workshop_information(self):
         return {
-            "workshop_subtitle": ''.join(self.subtitle), 
-            "workshop_price": ' '.join(self.price), 
-            "workshop_credit_hours": ' '.join(self.credit_hours), 
+            "workshop_subtitle": ' '.join(self.subtitle),
+            "workshop_price": ' '.join(self.price),
+            "workshop_credit_hours": ' '.join(self.credit_hours),
             "workshop_trainer": ' '.join(self.trainer),
             "workshop_description": ' '.join(self.description),
             "workshop_learning_objectives": ' '.join(self.learning_objectives),
@@ -140,8 +146,7 @@ def fetch_workshop_description_page(url):
     html_content = response.content.decode('utf-8')
 
     return html_content
-    
-    
+
 if __name__ == "__main__":
     html = fetch_workshop_description_page("https://ctrinstitute.com/product/on-demand-workshop-addictions-and-mental-health/")
     parser = WorkshopPageScraper()
