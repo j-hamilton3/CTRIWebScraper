@@ -95,7 +95,7 @@ class WorkshopPageScraper(HTMLParser):
 
         # Learning Objectives
         if self.learning_objectives_flag:
-            self.learning_objectives.append(data.strip())
+            self.learning_objectives.append(data.replace("Learning Objectives", "").strip())
 
         # Topics Reviewed
         if self.topics_reviewed_flag:
@@ -103,7 +103,7 @@ class WorkshopPageScraper(HTMLParser):
 
         # Target Audience
         if self.target_audience_flag:
-            self.target_audience.append(data.strip())
+            self.target_audience.append(data.replace("Target Audience", "").strip())
 
         # Description
         if self.description_flag:
