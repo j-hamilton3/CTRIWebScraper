@@ -59,11 +59,15 @@ class WorkshopPageScraper(HTMLParser):
             for attr in attrs:
                 if attr[1] == "parent-topic__learning-objectives":
                     self.learning_objectives_flag = True
-        
-        
 
+        # Topics Reviewed
+        if tag == "div":
+            for attr in attrs:
+                if attr[1] == "parent-topic__topics-reviewed":
+                    self.topics_reviewed_flag = True
+
+        # Target audience.
         
-    
     def handle_data(self, data):
 
         # Subtitles
@@ -86,7 +90,9 @@ class WorkshopPageScraper(HTMLParser):
         if self.learning_objectives_flag:
             self.learning_objectives.append(data.strip())
 
-        
+        # Topics Reviewed
+        if self.topics_reviewed_flag:
+            self.topics_reviewed.append(data.strip())
 
     def handle_endtag(self, tag):
 
@@ -99,16 +105,12 @@ class WorkshopPageScraper(HTMLParser):
             self.price_flag = False
             self.credit_hours_flag = False
             self.learning_objectives_flag = False
+            self.topics_reviewed_flag = False
         
         # Trainer
         if tag == "p":
             self.trainer_flag = False
             self.description_flag = False
-        
-    
-
-        
-
 
     def get_workshop_information(self):
         return {
