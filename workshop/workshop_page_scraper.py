@@ -132,11 +132,11 @@ class WorkshopPageScraper(HTMLParser):
             "workshop_subtitle": ' '.join(self.subtitle),
             "workshop_price": ' '.join(self.price),
             "workshop_credit_hours": ' '.join(self.credit_hours),
-            "workshop_trainer": ' '.join(self.trainer),
+            "workshop_trainer": ' '.join(self.trainer).strip(),
             "workshop_description": ' '.join(self.description),
-            "workshop_learning_objectives": ' '.join(self.learning_objectives),
-            "workshop_topics_reviewed": ' '.join(self.topics_reviewed),
-            "workshop_target_audience": ' '.join(self.target_audience),
+            "workshop_learning_objectives": ' '.join(self.learning_objectives).strip(),
+            "workshop_topics_reviewed": ' '.join(self.topics_reviewed).strip(),
+            "workshop_target_audience": ' '.join(self.target_audience).strip(),
         }
 
 def fetch_workshop_description_page(url):
