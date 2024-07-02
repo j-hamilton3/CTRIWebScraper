@@ -2,6 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
+from webinar_page_scraper import WebinarPageScraper, fetch_webinar_description_page
 
 class WebinarParser(HTMLParser):
     """An HTMLParser class used to scrape Webinar data."""
@@ -25,7 +26,15 @@ class WebinarParser(HTMLParser):
 
     def handle_data(self, data):
         if self.title_flag and self.current_url:
-            self.webinars.append({"Title": data.strip(), "URL": self.current_url})
+            self.webinars.append({"Title": data.strip(), 
+                                  "URL": self.current_url,
+                                  "Subtitle": "",
+                                  "Price": "",
+                                  "Credit Hours": "",
+                                  "Trainer": "",
+                                  "Description": "",
+                                  "Learning Objectives": "",
+                                  "Target Audience": ""})
             self.title_flag = False
             self.current_url = None
 
@@ -73,11 +82,24 @@ def fetch_all_webinars():
 
         if not webinars:
             break
+
+        for webinar in webinars:
+            description_html = fetch_webinar_description_page(webinar['URL'])
+            if description_html:
+                page_parser = WebinarPageScraper()
+                page_parser.feed(description_html)
+                webinar_data = page_parser.get_webinar_information()
+                webinar['Subtitle'] = webinar_data['webinar_subtitle']
+                webinar['Price'] = webinar_data['webinar_price']
+                webinar['Credit Hours'] = webinar_data['webinar_credit_hours']
+                webinar['Trainer'] = webinar_data['webinar_trainer']
+                webinar['Description'] = webinar_data['webinar_description']
+                webinar['Learning Objectives'] = webinar_data['webinar_learning_objectives']
+                webinar['Target Audience'] = webinar_data['webinar_target_audience']
+
         all_webinars.extend(webinars)
         page_number += 1
     return all_webinars
-
-###########################
 
 def get_desktop_path():
     """Get the path to the user's desktop directory."""
@@ -96,9 +118,9 @@ print("*********************************")
 
 # Get the path to user's desktop.
 desktop_path = get_desktop_path()
-output_file = os.path.join(desktop_path, 'webinar_titles_and_links.xlsx')
+output_file = os.path.join(desktop_path, 'webinar_web_data.xlsx')
 
-# Export workshop data to excel file.
+# Export webinar data to excel file.
 df = pd.DataFrame(all_webinars)
 with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     df.to_excel(writer, sheet_name='Webinars', index=False)
@@ -108,7 +130,7 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for idx, url in enumerate(df['URL'], start=2):
         worksheet.write_url(f'B{idx}', url)
 
-print("Webinar titles and links have been exported to workshop_titles_and_links.xlsx in your documents folder.")
+print("Webinar web data has been exported to webinar_web_data.xlsx in your documents folder.")
 
 # Open the created Excel file.
 if os.name == 'nt':  # Windows

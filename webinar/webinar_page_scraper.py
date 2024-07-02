@@ -133,9 +133,3 @@ def fetch_webinar_description_page(url):
     return html_content
 
 
-if __name__ == "__main__":
-    html = fetch_webinar_description_page("https://ctrinstitute.com/product/anti-bias-and-inclusion-webinar/")
-    scraper = WebinarPageScraper()
-    scraper.feed(html)
-    print(scraper.get_webinar_information())
-
