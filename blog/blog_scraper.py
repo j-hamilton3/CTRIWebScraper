@@ -2,6 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
+from blog_page_scraper import BlogPageScraper, fetch_blog_description_page
 
 class BlogParser(HTMLParser):
     """An HTMLParser class used to parse blog data."""
@@ -25,7 +26,11 @@ class BlogParser(HTMLParser):
 
     def handle_data(self, data):
         if self.blog_title_flag and self.current_url:
-            self.blogs.append({"Title": data, "URL": self.current_url})
+            self.blogs.append({"Title": data, 
+                               "URL": self.current_url,
+                               "Image": "",
+                               "Content": "",
+                               "Trainer": ""})
             self.blog_title_flag = False
             self.current_url = None
 
@@ -65,6 +70,20 @@ def fetch_all_blogs():
         
         if not blogs:
             break
+
+        for blog in blogs:
+            description_html = fetch_blog_description_page(blog['URL'])
+
+            if description_html:
+                page_parser = BlogPageScraper()
+                page_parser.feed(description_html)
+
+                blog_data = page_parser.get_blog_information()
+
+                blog['Image'] = blog_data['blog_image']
+                blog['Content'] = blog_data['blog_content']
+                blog['Trainer'] = blog_data['blog_trainer']
+
         all_blogs.extend(blogs)
         page_number += 1
     return all_blogs
@@ -86,7 +105,7 @@ print("*********************************")
 
 # Get the path to user's desktop.
 desktop_path = get_desktop_path()
-output_file = os.path.join(desktop_path, 'blog_titles_and_links.xlsx')
+output_file = os.path.join(desktop_path, 'blog_web_data.xlsx')
 
 # Export blog data to excel file.
 df = pd.DataFrame(all_blogs)
@@ -98,7 +117,7 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for idx, url in enumerate(df['URL'], start=2):
         worksheet.write_url(f'B{idx}', url)
 
-print("Blog titles and links have been exported to blog_titles_and_links.xlsx in your documents folder.")
+print("Blog web data has been exported to blog_web_data.xlsx in your documents folder.")
 
 # Open the created Excel file.
 if os.name == 'nt':  # Windows

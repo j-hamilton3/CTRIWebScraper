@@ -67,10 +67,3 @@ def fetch_blog_description_page(url):
     html_content = response.content.decode('utf-8')
 
     return html_content
-
-if __name__ == "__main__":
-    html = fetch_blog_description_page("https://ctrinstitute.com/blog/talk-about-grief-and-loss-with-clients/")
-    scraper = BlogPageScraper()
-    scraper.feed(html)
-
-    print(scraper.get_blog_information())
