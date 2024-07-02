@@ -4,11 +4,12 @@
 
 - Deeper scraping within pages.
 * Blogs - Category, Author
-* OD Webinars - Subtitle, Price, Credit Hours, Trainer, Description, Learning Objectives, Topics Reviewed, Target Audience
 * Topics
 * Books 
 * Handouts
 
 Workshops DONE 
 Podcasts DONE
+Webinars DONE
+
 
