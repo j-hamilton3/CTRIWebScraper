@@ -1,8 +1,0 @@
-Fields to grab:
-- Subtitle
-- Price
-- Credit hours
-- Trainer
-- Learning Objectives
-- Topics Reviewed
-- Target Audience

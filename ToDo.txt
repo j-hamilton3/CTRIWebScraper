@@ -4,8 +4,11 @@
 
 - Deeper scraping within pages.
 * Blogs - Category, Author
-* OD Workshops - Subtitle, Price, CEC hours, Description, Trainer
-* OD Webinars - Subtilte, Price, CEC hours, Description Trainer
+* OD Webinars - Subtitle, Price, Credit Hours, Trainer, Description, Learning Objectives, Topics Reviewed, Target Audience
+* Topics
+* Books 
+* Handouts
 
+Workshops DONE 
+Podcasts DONE
 
-*** Podcast - Add audio path to podcast scraper.
