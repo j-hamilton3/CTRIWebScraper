@@ -2,7 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
-from printable_handouts_page_scraper import PrintableHandoutsPageScraper, fetch_printable_handout_description_page
+from handout.printable_handouts_page_scraper import PrintableHandoutsPageScraper, fetch_printable_handout_description_page
 
 class HandoutsParser(HTMLParser):
     """An HTMLParser class used to scrape Printable Handouts data."""

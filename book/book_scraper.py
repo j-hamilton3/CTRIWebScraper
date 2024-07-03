@@ -2,7 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
-from book_page_scraper import BookPageScraper, fetch_book_description_page
+from book.book_page_scraper import BookPageScraper, fetch_book_description_page
 
 class BookParser(HTMLParser):
     """An HTMLParser class used to scrape Book data."""

@@ -2,7 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
-from blog_page_scraper import BlogPageScraper, fetch_blog_description_page
+from blog.blog_page_scraper import BlogPageScraper, fetch_blog_description_page
 
 class BlogParser(HTMLParser):
     """An HTMLParser class used to parse blog data."""

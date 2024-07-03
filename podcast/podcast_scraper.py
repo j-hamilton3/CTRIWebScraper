@@ -2,7 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
-from podcast_page_scraper import PodcastPageScraper, fetch_podcast_description_page
+from podcast.podcast_page_scraper import PodcastPageScraper, fetch_podcast_description_page
 
 class PodcastParser(HTMLParser):
     """An HTMLParser class used to scrape Podcast data."""

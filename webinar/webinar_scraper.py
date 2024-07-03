@@ -2,7 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
-from webinar_page_scraper import WebinarPageScraper, fetch_webinar_description_page
+from webinar.webinar_page_scraper import WebinarPageScraper, fetch_webinar_description_page
 
 class WebinarParser(HTMLParser):
     """An HTMLParser class used to scrape Webinar data."""

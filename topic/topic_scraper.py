@@ -2,7 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
-from topic_page_scraper import TopicPageScraper, fetch_topic_description_page
+from topic.topic_page_scraper import TopicPageScraper, fetch_topic_description_page
 
 class TopicParser(HTMLParser):
     """An HTMLParser class used to scrape Topic data."""

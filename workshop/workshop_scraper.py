@@ -2,7 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
-from workshop_page_scraper import WorkshopPageScraper, fetch_workshop_description_page
+from workshop.workshop_page_scraper import WorkshopPageScraper, fetch_workshop_description_page
 
 class WorkshopParser(HTMLParser):
     """An HTMLParser class used to scrape Workshop data."""
