@@ -1,6 +1,6 @@
-- Combined script to grab all of the data into one excel spreadsheet.
-
 - GUI?
+- Exception Handling
+- Consider adding "On-demand" prefix to webinars/workshops.
 
 Workshops DONE 
 Podcasts DONE

@@ -65,4 +65,3 @@ def all_resources_to_excel():
     if os.name == 'nt':  # Windows
         os.startfile(output_file)
 
-all_resources_to_excel()
