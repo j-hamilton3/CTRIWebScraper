@@ -2,6 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
+from topic_page_scraper import TopicPageScraper, fetch_topic_description_page
 
 class TopicParser(HTMLParser):
     """An HTMLParser class used to scrape Topic data."""
@@ -28,7 +29,12 @@ class TopicParser(HTMLParser):
             title = data.strip()
             if title.endswith('-'):
                 title = title.rstrip('-')
-            self.topics.append({"Title": title, "URL": self.current_url})
+            self.topics.append({"Title": title, 
+                                "URL": self.current_url,
+                                "Subtitle": "",
+                                "Training Options": "",
+                                "Upcoming Trainings": "",
+                                "Description": ""})
             self.title_flag = False
             self.current_url = None
 
@@ -75,6 +81,19 @@ def fetch_all_topics():
 
         if not topics:
             break
+
+        for topic in topics:
+            description_html = fetch_topic_description_page(topic['URL'])
+            if description_html:
+                page_parser = TopicPageScraper()
+                page_parser.feed(description_html)
+                topic_data = page_parser.get_topic_information()
+
+                topic['Subtitle'] = topic_data['topic_subtitle']
+                topic['Training Options'] = topic_data['topic_training_options']
+                topic['Upcoming Trainings'] = topic_data['topic_upcoming_trainings']
+                topic['Description'] = topic_data['topic_description']
+
         all_topics.extend(topics)
         page_number += 1
     return all_topics
@@ -98,7 +117,7 @@ print("*********************************")
 
 # Get the path to user's desktop.
 desktop_path = get_desktop_path()
-output_file = os.path.join(desktop_path, 'topic_titles_and_links.xlsx')
+output_file = os.path.join(desktop_path, 'topic_web_data.xlsx')
 
 # Export topic data to excel file.
 df = pd.DataFrame(all_topics)
@@ -110,7 +129,7 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for idx, url in enumerate(df['URL'], start=2):
         worksheet.write_url(f'B{idx}', url)
 
-print("Topic titles and links have been exported to topic_titles_and_links.xlsx in your documents folder.")
+print("Topic web data has been exported to topic_web_data.xlsx in your documents folder.")
 
 # Open the created Excel file.
 if os.name == 'nt':  # Windows

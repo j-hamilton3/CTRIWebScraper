@@ -1,5 +1,3 @@
-# Subtitle, Training Options, Upcoming Trainings
-
 import requests
 from html.parser import HTMLParser
 import pandas as pd
