@@ -109,34 +109,34 @@ def get_desktop_path():
     """Get the path to the user's desktop directory."""
     return os.path.join(os.path.join(os.path.expanduser('~')), 'Documents')
 
-all_workshops = fetch_all_workshops()
-print("**********************************")
-print(f"*** Found {len(all_workshops)} workshops!")
-print("**********************************")
-for workshop in all_workshops:
-    print(f"{workshop['Title']} - {workshop['URL']}")
+def workshops_to_excel():
+    all_workshops = fetch_all_workshops()
+    print("**********************************")
+    print(f"*** Found {len(all_workshops)} workshops!")
+    print("**********************************")
+    for workshop in all_workshops:
+        print(f"{workshop['Title']} - {workshop['URL']}")
 
-print("*********************************")
-print("*** Exporting to excel file.")
-print("*********************************")
+    print("*********************************")
+    print("*** Exporting to excel file.")
+    print("*********************************")
 
-# Get the path to user's desktop.
-desktop_path = get_desktop_path()
-output_file = os.path.join(desktop_path, 'workshop_web_data.xlsx')
+    # Get the path to user's desktop.
+    desktop_path = get_desktop_path()
+    output_file = os.path.join(desktop_path, 'workshop_web_data.xlsx')
 
-# Export workshop data to excel file.
-df = pd.DataFrame(all_workshops)
-with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-    df.to_excel(writer, sheet_name='Workshops', index=False)
-    workbook = writer.book
-    worksheet = writer.sheets['Workshops']
+    # Export workshop data to excel file.
+    df = pd.DataFrame(all_workshops)
+    with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+        df.to_excel(writer, sheet_name='Workshops', index=False)
+        workbook = writer.book
+        worksheet = writer.sheets['Workshops']
 
-    for idx, url in enumerate(df['URL'], start=2):
-        worksheet.write_url(f'B{idx}', url)
+        for idx, url in enumerate(df['URL'], start=2):
+            worksheet.write_url(f'B{idx}', url)
 
-print("Workshop titles and links have been exported to workshop_web_data.xlsx in your documents folder.")
+    print("Workshop titles and links have been exported to workshop_web_data.xlsx in your documents folder.")
 
-# Open the created Excel file.
-if os.name == 'nt':  # Windows
-    os.startfile(output_file)
-    os.startfile(output_file)
+    # Open the created Excel file.
+    if os.name == 'nt':  # Windows
+        os.startfile(output_file)

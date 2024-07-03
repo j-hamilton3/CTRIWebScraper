@@ -92,33 +92,34 @@ def get_desktop_path():
     """Get the path to the user's desktop directory."""
     return os.path.join(os.path.join(os.path.expanduser('~')), 'Documents')
 
-all_blogs = fetch_all_blogs()
-print("**********************************")
-print(f"*** Found {len(all_blogs)} blogs!")
-print("**********************************")
-for blog in all_blogs:
-    print(f"{blog['Title']} - {blog['URL']}")
+def blogs_to_excel():
+    all_blogs = fetch_all_blogs()
+    print("**********************************")
+    print(f"*** Found {len(all_blogs)} blogs!")
+    print("**********************************")
+    for blog in all_blogs:
+        print(f"{blog['Title']} - {blog['URL']}")
 
-print("*********************************")
-print("*** Exporting to excel file.")
-print("*********************************")
+    print("*********************************")
+    print("*** Exporting to excel file.")
+    print("*********************************")
 
-# Get the path to user's desktop.
-desktop_path = get_desktop_path()
-output_file = os.path.join(desktop_path, 'blog_web_data.xlsx')
+    # Get the path to user's desktop.
+    desktop_path = get_desktop_path()
+    output_file = os.path.join(desktop_path, 'blog_web_data.xlsx')
 
-# Export blog data to excel file.
-df = pd.DataFrame(all_blogs)
-with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-    df.to_excel(writer, sheet_name='Blogs', index=False)
-    workbook = writer.book
-    worksheet = writer.sheets['Blogs']
+    # Export blog data to excel file.
+    df = pd.DataFrame(all_blogs)
+    with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+        df.to_excel(writer, sheet_name='Blogs', index=False)
+        workbook = writer.book
+        worksheet = writer.sheets['Blogs']
 
-    for idx, url in enumerate(df['URL'], start=2):
-        worksheet.write_url(f'B{idx}', url)
+        for idx, url in enumerate(df['URL'], start=2):
+            worksheet.write_url(f'B{idx}', url)
 
-print("Blog web data has been exported to blog_web_data.xlsx in your documents folder.")
+    print("Blog web data has been exported to blog_web_data.xlsx in your documents folder.")
 
-# Open the created Excel file.
-if os.name == 'nt':  # Windows
-    os.startfile(output_file)
+    # Open the created Excel file.
+    if os.name == 'nt':  # Windows
+        os.startfile(output_file)

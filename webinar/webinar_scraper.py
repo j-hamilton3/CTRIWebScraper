@@ -105,34 +105,34 @@ def get_desktop_path():
     """Get the path to the user's desktop directory."""
     return os.path.join(os.path.join(os.path.expanduser('~')), 'Documents')
 
-all_webinars = fetch_all_webinars()
-print("**********************************")
-print(f"*** Found {len(all_webinars)} webinars!")
-print("**********************************")
-for webinar in all_webinars:
-    print(f"{webinar['Title']} - {webinar['URL']}")
+def webinars_to_excel():
+    all_webinars = fetch_all_webinars()
+    print("**********************************")
+    print(f"*** Found {len(all_webinars)} webinars!")
+    print("**********************************")
+    for webinar in all_webinars:
+        print(f"{webinar['Title']} - {webinar['URL']}")
 
-print("*********************************")
-print("*** Exporting to excel file.")
-print("*********************************")
+    print("*********************************")
+    print("*** Exporting to excel file.")
+    print("*********************************")
 
-# Get the path to user's desktop.
-desktop_path = get_desktop_path()
-output_file = os.path.join(desktop_path, 'webinar_web_data.xlsx')
+    # Get the path to user's desktop.
+    desktop_path = get_desktop_path()
+    output_file = os.path.join(desktop_path, 'webinar_web_data.xlsx')
 
-# Export webinar data to excel file.
-df = pd.DataFrame(all_webinars)
-with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-    df.to_excel(writer, sheet_name='Webinars', index=False)
-    workbook = writer.book
-    worksheet = writer.sheets['Webinars']
+    # Export webinar data to excel file.
+    df = pd.DataFrame(all_webinars)
+    with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+        df.to_excel(writer, sheet_name='Webinars', index=False)
+        workbook = writer.book
+        worksheet = writer.sheets['Webinars']
 
-    for idx, url in enumerate(df['URL'], start=2):
-        worksheet.write_url(f'B{idx}', url)
+        for idx, url in enumerate(df['URL'], start=2):
+            worksheet.write_url(f'B{idx}', url)
 
-print("Webinar web data has been exported to webinar_web_data.xlsx in your documents folder.")
+    print("Webinar web data has been exported to webinar_web_data.xlsx in your documents folder.")
 
-# Open the created Excel file.
-if os.name == 'nt':  # Windows
-    os.startfile(output_file)
-    os.startfile(output_file)
+    # Open the created Excel file.
+    if os.name == 'nt':  # Windows
+        os.startfile(output_file)

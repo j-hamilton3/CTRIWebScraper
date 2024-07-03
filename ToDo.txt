@@ -1,16 +1,14 @@
-- Clean up combined scraper -> working with module imports instead of explcitly defining them in there.
-*** if __name__ == __main__ to make the modules work independently. 
+- Combined script to grab all of the data into one excel spreadsheet.
 
-
-- Deeper scraping within pages.
-* Blogs - Category, Author
-* Topics
-* Books 
-* Handouts
+- GUI?
 
 Workshops DONE 
 Podcasts DONE
 Webinars DONE
 Blogs DONE
+Handouts DONE
+Books DONE
+Topics DONE
+
 
 

@@ -77,33 +77,34 @@ def get_documents_path():
     """Gets the path to the user's documents folder."""
     return os.path.join(os.path.join(os.path.expanduser('~')), 'Documents')
 
-all_handouts = fetch_all_handouts()
-print("**********************************")
-print(f"*** Found {len(all_handouts)} handouts!")
-print("**********************************")
-for handout in all_handouts:
-    print(f"{handout['Title']} - {handout['URL']}")
+def handouts_to_excel():
+    all_handouts = fetch_all_handouts()
+    print("**********************************")
+    print(f"*** Found {len(all_handouts)} handouts!")
+    print("**********************************")
+    for handout in all_handouts:
+        print(f"{handout['Title']} - {handout['URL']}")
 
-print("*********************************")
-print("*** Exporting to excel file.")
-print("*********************************")
+    print("*********************************")
+    print("*** Exporting to excel file.")
+    print("*********************************")
 
-# Get the path to user's desktop.
-documents_path = get_documents_path()
-output_file = os.path.join(documents_path, 'handout_web_data.xlsx')
+    # Get the path to user's desktop.
+    documents_path = get_documents_path()
+    output_file = os.path.join(documents_path, 'handout_web_data.xlsx')
 
-# Export handout data to excel file.
-df = pd.DataFrame(all_handouts)
-with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-    df.to_excel(writer, sheet_name='Handouts', index=False)
-    workbook = writer.book
-    worksheet = writer.sheets['Handouts']
+    # Export handout data to excel file.
+    df = pd.DataFrame(all_handouts)
+    with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+        df.to_excel(writer, sheet_name='Handouts', index=False)
+        workbook = writer.book
+        worksheet = writer.sheets['Handouts']
 
-    for idx, url in enumerate(df['URL'], start=2):
-        worksheet.write_url(f'B{idx}', url)
+        for idx, url in enumerate(df['URL'], start=2):
+            worksheet.write_url(f'B{idx}', url)
 
-print("Handout web data has been exported to handout_web_data.xlsx in your documents folder.")
+    print("Handout web data has been exported to handout_web_data.xlsx in your documents folder.")
 
-# Open the created Excel file.
-if os.name == 'nt':  # Windows
-    os.startfile(output_file)
+    # Open the created Excel file.
+    if os.name == 'nt':  # Windows
+        os.startfile(output_file)

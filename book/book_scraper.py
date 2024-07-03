@@ -102,35 +102,36 @@ def get_documents_path():
     """Get the path to the user's documents directory."""
     return os.path.join(os.path.join(os.path.expanduser('~')), 'Documents')
 
-all_books = fetch_all_books()
+def books_to_excel():
+    all_books = fetch_all_books()
 
-print("**********************************")
-print(f"*** Found {len(all_books)} books!")
-print("**********************************")
+    print("**********************************")
+    print(f"*** Found {len(all_books)} books!")
+    print("**********************************")
 
-for book in all_books:
-    print(f"{book['Title']} - {book['URL']}")
+    for book in all_books:
+        print(f"{book['Title']} - {book['URL']}")
 
-print("*********************************")
-print("*** Exporting to excel file.")
-print("*********************************")
+    print("*********************************")
+    print("*** Exporting to excel file.")
+    print("*********************************")
 
-# Get the path to user's desktop.
-documents_path = get_documents_path()
-output_file = os.path.join(documents_path, 'book_web_data.xlsx')
+    # Get the path to user's desktop.
+    documents_path = get_documents_path()
+    output_file = os.path.join(documents_path, 'book_web_data.xlsx')
 
-# Export book data to excel file.
-df = pd.DataFrame(all_books)
-with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-    df.to_excel(writer, sheet_name='Books', index=False)
-    workbook = writer.book
-    worksheet = writer.sheets['Books']
+    # Export book data to excel file.
+    df = pd.DataFrame(all_books)
+    with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+        df.to_excel(writer, sheet_name='Books', index=False)
+        workbook = writer.book
+        worksheet = writer.sheets['Books']
 
-    for idx, url in enumerate(df['URL'], start=2):
-        worksheet.write_url(f'B{idx}', url)
+        for idx, url in enumerate(df['URL'], start=2):
+            worksheet.write_url(f'B{idx}', url)
 
-print("Book web data has been exported to book_web_data.xlsx in your documents folder.")
+    print("Book web data has been exported to book_web_data.xlsx in your documents folder.")
 
-# Open the created Excel file.
-if os.name == 'nt':  # Windows
-    os.startfile(output_file)
+    # Open the created Excel file.
+    if os.name == 'nt':  # Windows
+        os.startfile(output_file)

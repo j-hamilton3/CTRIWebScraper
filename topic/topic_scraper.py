@@ -104,35 +104,35 @@ def get_desktop_path():
     """Get the path to the user's desktop directory."""
     return os.path.join(os.path.join(os.path.expanduser('~')), 'Documents')
 
-all_topics = fetch_all_topics()
-print("**********************************")
-print(f"*** Found {len(all_topics)} topics!")
-print("**********************************")
-for topic in all_topics:
-    print(f"{topic['Title']} - {topic['URL']}")
+def topics_to_excel():
+    all_topics = fetch_all_topics()
+    print("**********************************")
+    print(f"*** Found {len(all_topics)} topics!")
+    print("**********************************")
+    for topic in all_topics:
+        print(f"{topic['Title']} - {topic['URL']}")
 
-print("*********************************")
-print("*** Exporting to excel file.")
-print("*********************************")
+    print("*********************************")
+    print("*** Exporting to excel file.")
+    print("*********************************")
 
-# Get the path to user's desktop.
-desktop_path = get_desktop_path()
-output_file = os.path.join(desktop_path, 'topic_web_data.xlsx')
+    # Get the path to user's desktop.
+    desktop_path = get_desktop_path()
+    output_file = os.path.join(desktop_path, 'topic_web_data.xlsx')
 
-# Export topic data to excel file.
-df = pd.DataFrame(all_topics)
-with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-    df.to_excel(writer, sheet_name='Topics', index=False)
-    workbook = writer.book
-    worksheet = writer.sheets['Topics']
+    # Export topic data to excel file.
+    df = pd.DataFrame(all_topics)
+    with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+        df.to_excel(writer, sheet_name='Topics', index=False)
+        workbook = writer.book
+        worksheet = writer.sheets['Topics']
 
-    for idx, url in enumerate(df['URL'], start=2):
-        worksheet.write_url(f'B{idx}', url)
+        for idx, url in enumerate(df['URL'], start=2):
+            worksheet.write_url(f'B{idx}', url)
 
-print("Topic web data has been exported to topic_web_data.xlsx in your documents folder.")
+    print("Topic web data has been exported to topic_web_data.xlsx in your documents folder.")
 
-# Open the created Excel file.
-if os.name == 'nt':  # Windows
-    os.startfile(output_file)
-    os.startfile(output_file)
+    # Open the created Excel file.
+    if os.name == 'nt':  # Windows
+        os.startfile(output_file)
 
