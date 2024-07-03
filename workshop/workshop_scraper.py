@@ -71,7 +71,7 @@ def fetch_all_workshops():
     page_number = 1
     all_workshops = []
     while True:
-        print(f"Fetching page {page_number}...")
+        print(f"Fetching Workshop: page {page_number}...")
         posts_html = fetch_workshop_page(page_number)
 
         if not posts_html:

@@ -59,6 +59,7 @@ def fetch_all_handouts():
 
     parser = HandoutsParser()
     parser.feed(posts_html)
+    print("Fetching Handout: page 1...")
     handouts = parser.get_handouts()
 
     for handout in handouts:

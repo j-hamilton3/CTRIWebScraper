@@ -56,7 +56,7 @@ def fetch_all_blogs():
     page_number = 1
     all_blogs = []
     while True:
-        print(f"Fetching page {page_number}...")
+        print(f"Fetching Blog: page {page_number}...")
         response = fetch_blog_page(page_number)
         
         posts_html = response['data']['posts']

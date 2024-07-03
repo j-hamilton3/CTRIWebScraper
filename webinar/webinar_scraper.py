@@ -70,7 +70,7 @@ def fetch_all_webinars():
     page_number = 1
     all_webinars = []
     while True:
-        print(f"Fetching page {page_number}...")
+        print(f"Fetching Webinar: page {page_number}...")
         posts_html = fetch_webinar_page(page_number)
 
         if not posts_html:

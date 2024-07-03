@@ -47,21 +47,22 @@ def all_resources_to_excel():
 
     end_time = time.time()
     elapsed_time = end_time - start_time
+    
     print(f"*** COMPLETED IN {elapsed_time:.2f} SECONDS. ***")
 
     # Define the path to the Excel file
     documents_path = get_documents_path()
-    output_file = os.path.join(documents_path, "all_resources.xlsx")
+    output_file = os.path.join(documents_path, "ctri_all_web_data.xlsx")
 
-    # Create a Pandas Excel writer using XlsxWriter as the engine
     with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
         for resource_type, data in resources.items():
-            # Convert the data to a DataFrame
             df = pd.DataFrame(data)
-            # Write the DataFrame to a sheet named after the resource type
             df.to_excel(writer, sheet_name=resource_type.capitalize(), index=False)
 
-    print(f"Data has been written to {output_file}")
+    print(f"Web data has been exported to ctri_all_web_data.xlsx in your documents folder.")
+    
+    # Open the created Excel file.
+    if os.name == 'nt':  # Windows
+        os.startfile(output_file)
 
-# Run the function to test it
 all_resources_to_excel()

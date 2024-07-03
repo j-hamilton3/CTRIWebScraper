@@ -61,7 +61,7 @@ def fetch_all_podcasts():
     page_number = 1
     all_podcasts = []
     while True:
-        print(f"Fetching page {page_number}...")
+        print(f"Fetching Podcast: page {page_number}...")
         posts_html = fetch_podcast_page(page_number)
 
         if not posts_html:
