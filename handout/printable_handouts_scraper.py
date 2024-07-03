@@ -2,6 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
+from printable_handouts_page_scraper import PrintableHandoutsPageScraper, fetch_printable_handout_description_page
 
 class HandoutsParser(HTMLParser):
     """An HTMLParser class used to scrape Printable Handouts data."""
@@ -25,7 +26,9 @@ class HandoutsParser(HTMLParser):
 
     def handle_data(self, data):
         if self.title_flag and self.current_url:
-            self.handouts.append({"Title": data.strip(), "URL": self.current_url})
+            self.handouts.append({"Title": data.strip(), 
+                                  "URL": self.current_url,
+                                  "Resource Link": "",})
             self.title_flag = False
             self.current_url = None
 
@@ -58,6 +61,16 @@ def fetch_all_handouts():
     parser.feed(posts_html)
     handouts = parser.get_handouts()
 
+    for handout in handouts:
+        description_html = fetch_printable_handout_description_page(handout['URL'])
+
+        if description_html:
+            page_parser = PrintableHandoutsPageScraper()
+            page_parser.feed(description_html)
+            handout_data = page_parser.get_printable_handout_information()
+
+            handout['Resource Link'] = handout_data['printable_handout_resource_link']
+
     return handouts
 
 def get_documents_path():
@@ -77,9 +90,9 @@ print("*********************************")
 
 # Get the path to user's desktop.
 documents_path = get_documents_path()
-output_file = os.path.join(documents_path, 'handout_titles_and_links.xlsx')
+output_file = os.path.join(documents_path, 'handout_web_data.xlsx')
 
-# Export workshop data to excel file.
+# Export handout data to excel file.
 df = pd.DataFrame(all_handouts)
 with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     df.to_excel(writer, sheet_name='Handouts', index=False)
@@ -89,9 +102,8 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for idx, url in enumerate(df['URL'], start=2):
         worksheet.write_url(f'B{idx}', url)
 
-print("Handout titles and links have been exported to handout_titles_and_links.xlsx in your documents folder.")
+print("Handout web data has been exported to handout_web_data.xlsx in your documents folder.")
 
 # Open the created Excel file.
 if os.name == 'nt':  # Windows
     os.startfile(output_file)
-    os.startfile(output_file) 

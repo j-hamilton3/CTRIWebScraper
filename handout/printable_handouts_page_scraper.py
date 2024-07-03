@@ -21,7 +21,8 @@ class PrintableHandoutsPageScraper(HTMLParser):
 
         if tag == "a" and self.inside_right_p_tag:
             for attr in attrs:
-                self.resource_link.append(attr[1])
+                if attr[0] == "href" and attr[1].endswith(".pdf"):  # Added condition to check if URL ends with .pdf
+                    self.resource_link.append(attr[1])
 
     def handle_endtag(self, tag):
         if tag == "p":
