@@ -2,6 +2,7 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 import os
+from book_page_scraper import BookPageScraper, fetch_book_description_page
 
 class BookParser(HTMLParser):
     """An HTMLParser class used to scrape Book data."""
@@ -25,7 +26,13 @@ class BookParser(HTMLParser):
 
     def handle_data(self, data):
         if self.title_flag and self.current_url:
-            self.books.append({"Title": data.strip(), "URL": self.current_url})
+            self.books.append({"Title": data.strip(), 
+                               "URL": self.current_url,
+                               "Subtitle": "",
+                               "Price": "",
+                               "Author": "",
+                               "Short Description": "",
+                               "Long Description": ""})
             self.title_flag = False
             self.current_url = None
 
@@ -73,6 +80,20 @@ def fetch_all_books():
 
         if not books:
             break
+
+        for book in books:
+            description_html = fetch_book_description_page(book['URL'])
+            if description_html:
+                page_parser = BookPageScraper()
+                page_parser.feed(description_html)
+                book_data = page_parser.get_book_information()
+
+                book['Subtitle'] = book_data['book_subtitle']
+                book['Price'] = book_data['book_price']
+                book['Author'] = book_data['book_author']
+                book['Short Description'] = book_data['book_short_description']
+                book['Long Description'] = book_data['book_long_description']
+
         all_books.extend(books)
         page_number += 1
     return all_books
@@ -96,9 +117,9 @@ print("*********************************")
 
 # Get the path to user's desktop.
 documents_path = get_documents_path()
-output_file = os.path.join(documents_path, 'book_titles_and_links.xlsx')
+output_file = os.path.join(documents_path, 'book_web_data.xlsx')
 
-# Export workshop data to excel file.
+# Export book data to excel file.
 df = pd.DataFrame(all_books)
 with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     df.to_excel(writer, sheet_name='Books', index=False)
@@ -108,9 +129,8 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for idx, url in enumerate(df['URL'], start=2):
         worksheet.write_url(f'B{idx}', url)
 
-print("Book titles and links have been exported to book_titles_and_links.xlsx in your documents folder.")
+print("Book web data has been exported to book_web_data.xlsx in your documents folder.")
 
 # Open the created Excel file.
 if os.name == 'nt':  # Windows
-    os.startfile(output_file)
     os.startfile(output_file)

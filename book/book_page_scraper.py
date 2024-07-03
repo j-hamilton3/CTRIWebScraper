@@ -1,5 +1,3 @@
-# Subtitle, Price, Authors, Short Description, Long Description
-import requests
 from html.parser import HTMLParser
 import pandas as pd
 import cloudscraper
