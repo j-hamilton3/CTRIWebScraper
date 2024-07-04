@@ -58,6 +58,7 @@ def fetch_podcast_page(page_number):
         return response.text
 
 def fetch_all_podcasts():
+    print("*** FETCHING ALL PODCASTS ***")
     page_number = 1
     all_podcasts = []
     while True:

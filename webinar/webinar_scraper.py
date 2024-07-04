@@ -67,6 +67,7 @@ def fetch_webinar_page(page_number):
         return response.text
 
 def fetch_all_webinars():
+    print("*** FETCHING ALL WEBINARS ***")
     page_number = 1
     all_webinars = []
     while True:

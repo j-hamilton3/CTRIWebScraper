@@ -135,7 +135,7 @@ def workshops_to_excel():
         for idx, url in enumerate(df['URL'], start=2):
             worksheet.write_url(f'B{idx}', url)
 
-    print("Workshop titles and links have been exported to workshop_web_data.xlsx in your documents folder.")
+    print("Workshop web data has been exported to workshop_web_data.xlsx in your documents folder.")
 
     # Open the created Excel file.
     if os.name == 'nt':  # Windows

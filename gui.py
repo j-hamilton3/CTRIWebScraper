@@ -123,7 +123,10 @@ class Application:
         self.root.destroy()
 
 if __name__ == "__main__":
+    print("*** Welcome to CTRI Web Scraper! ***")
+    print("*** Keep this window open if you want to view scraping progress. ***")
+
     root = Tk()
     app = Application(root)
     root.mainloop()
-
+    

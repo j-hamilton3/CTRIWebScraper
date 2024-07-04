@@ -66,6 +66,7 @@ def fetch_topic_page(page_number):
         return response.text
 
 def fetch_all_topics():
+    print("*** FETCHING ALL TOPICS ***")
     page_number = 1
     all_topics = []
     while True:
