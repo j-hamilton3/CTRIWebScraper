@@ -15,8 +15,8 @@ class Application:
         self.root = root
         self.root.title("CTRI Web Scraper")
         self.root.geometry('400x350')
+        self.root.resizable(False, False)
 
-        # Initialize root_destroyed flag
         self.root_destroyed = False
 
         # Frame for "Scrape all data" section.
@@ -26,7 +26,7 @@ class Application:
         self.all_data_label = Label(self.all_data_frame, text='Scrape all data from ctrinstitute.com:')
         self.all_data_label.pack()
 
-        self.all_data_time_warning = Label(self.all_data_frame, text='(This takes around 8 minutes...)')
+        self.all_data_time_warning = Label(self.all_data_frame, text='(This takes around 8 minutes.)')
         self.all_data_time_warning.pack()
 
         vertical_space = Label(self.all_data_frame, text="")
@@ -64,7 +64,7 @@ class Application:
             button.grid(row=row, column=col, padx=5, pady=5)
             self.buttons_widgets.append(button)
 
-        # Status label at the bottom
+        # Status label at the bottom.
         self.status_label = Label(self.root, text="", bd=1)
         self.status_label.pack(side=BOTTOM, fill=X)
 
@@ -75,7 +75,7 @@ class Application:
 
     def specific_to_excel(self, func):
         def wrapper():
-            # Update status label
+            # Update status .
             self.status_label.config(text="Fetching data, please wait...", fg="blue")
 
             # Loading window.
@@ -109,7 +109,7 @@ class Application:
                     if not self.root_destroyed:
                         for button in self.buttons_widgets:
                             button.config(state=NORMAL)
-                        # Clear status label
+                    
                         self.status_label.config(text="")
 
             thread = threading.Thread(target=task, daemon=True) 
@@ -119,7 +119,6 @@ class Application:
         return wrapper
 
     def on_closing(self):
-        # Flag to keep track of if the root window is closed.
         self.root_destroyed = True
         self.root.destroy()
 
@@ -127,3 +126,4 @@ if __name__ == "__main__":
     root = Tk()
     app = Application(root)
     root.mainloop()
+
