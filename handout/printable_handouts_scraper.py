@@ -52,6 +52,7 @@ def fetch_handouts_page():
     return response.text
 
 def fetch_all_handouts():
+    print("*** FETCHING ALL HANDOUTS ***")
     posts_html = fetch_handouts_page()
 
     if not posts_html:

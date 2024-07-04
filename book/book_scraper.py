@@ -65,6 +65,7 @@ def fetch_book_page(page_number):
         return response.text
 
 def fetch_all_books():
+    print("*** FETCHING ALL BOOKS ***")
     page_number = 1
     all_books = []
     while True:

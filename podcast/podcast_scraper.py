@@ -117,7 +117,7 @@ def podcasts_to_excel():
         for idx, url in enumerate(df['URL'], start=2):
             worksheet.write_url(f'B{idx}', url)
 
-    print("Podcast titles, links, descriptions, and audio paths have been exported to podcast_web_data.xlsx in your documents folder.")
+    print("Podcast web data has been exported to podcast_web_data.xlsx in your documents folder.")
 
     # Open the created Excel file.
     if os.name == 'nt':  # Windows

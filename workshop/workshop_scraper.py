@@ -68,6 +68,7 @@ def fetch_workshop_page(page_number):
         return response.text
 
 def fetch_all_workshops():
+    print("*** FETCHING ALL WORKSHOPS ***")
     page_number = 1
     all_workshops = []
     while True:

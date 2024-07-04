@@ -53,6 +53,7 @@ def fetch_blog_page(page_number):
     return response.json()
 
 def fetch_all_blogs():
+    print("*** FETCHING ALL BLOGS ***")
     page_number = 1
     all_blogs = []
     while True:
